@@ -1,12 +1,6 @@
-from typing import ClassVar, List, TypeVar
+from typing import ClassVar, List, Optional, TypeVar
 
-from pydantic import BaseModel, root_validator
-
-
-def ensure_title(_, values):
-    if 'title' not in values:
-        values['title'] = values['name'].title()
-    return values
+from pydantic import BaseModel
 
 
 class Constraint(BaseModel):
@@ -78,13 +72,17 @@ class DeleteModel(View):
     pass
 
 
-class Section(BaseModel):
-    name: str
-    title: str
-    views: List[View] = []
+class Section:
 
-    _ensure_title = root_validator(pre=True, allow_reuse=True)(ensure_title)
+    def __init__(self, name: str, title: Optional[str] = None):
+        self.name = name
+        self.title = title or name.title()
+        self.views: List[View] = []
 
 
 class ModelSection(Section):
-    model: Model
+
+    def __init__(self, model: Model, **kwargs):
+        self.model = model
+        kwargs['name'] = kwargs.get('name') or model.name
+        super().__init__(**kwargs)

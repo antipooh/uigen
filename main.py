@@ -4,8 +4,9 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from models import ModelSection
-from transform import class_to_model
+from uigen.generate import FrontGenerator
+from uigen.models import ModelSection
+from uigen.transform import class_to_model
 
 
 class MessageState(Enum):
@@ -30,5 +31,6 @@ class Message(BaseModel):
     external_id: Optional[str] = None
 
 
-print(class_to_model(Message))
-# ui = [ModelSection(model=)]
+ui = [ModelSection(model=class_to_model(Message))]
+gen = FrontGenerator('./generated/front', clear_dest=True)
+gen(ui)

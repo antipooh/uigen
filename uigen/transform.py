@@ -2,8 +2,8 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Any, Optional, Type
 
-from models import Attr, AttrType, Model, StrAttr, IntAttr, DecimalAttr, DateTimeAttr
-from type_util import is_optional_type
+from .models import Attr, AttrType, Model, StrAttr, IntAttr, DecimalAttr, DateTimeAttr
+from .type_util import is_optional_type
 
 _type_map = {
     str: StrAttr,
@@ -32,7 +32,7 @@ def attr_from_annotation(name: str, annotation) -> Optional[Attr]:
 
 def class_to_model(cls: Type[Any],
                    name: Optional[str] = None) -> Model:
-    model = Model(name=name or cls.__name__)
+    model = Model(name=(name or cls.__name__).lower())
     annotations = getattr(cls, '__annotations__', {})
     for attr_name, annotation in annotations.items():
         attr = attr_from_annotation(attr_name, annotation)
